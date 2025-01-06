@@ -14,16 +14,17 @@ urlpatterns = [
     # Course
     path('course/', views.CourseList.as_view()),
     #chapter
-   # path('chapter/', views.ChapterList.as_view()),
-   path('student-enroll-course/', views.StudentCourseEnrollmentList.as_view()),
+    # path('chapter/', views.ChapterList.as_view()),
+    path('student-enroll-course/', views.StudentCourseEnrollmentList.as_view()),
     path('fetch-enrolled-courses/<int:student_id>', views.EnrolledStudentList.as_view()),
    
     # Lecturer courses
     path('lecturer-course/<int:lecturer_id>', views.LecturerCourseList.as_view()),
+    path('course/<int:pk>/', views.CourseDetails.as_view()),
     #Adding Assignment from lecturer
     path('add_assignment/',views.AssignmentList.as_view()),
     # Add this to your urlpatterns list
-path('course/<int:course_id>/assignments/', views.CourseAssignmentList.as_view()),
+    path('course/<int:course_id>/assignments/', views.CourseAssignmentList.as_view()),
 
     #Similarity Checker
     path('upload/', views.upload_assignment, name='upload_assignment'),

@@ -53,7 +53,12 @@ class CourseList(generics.ListCreateAPIView):
     serializer_class = CourseSerializer
     #permission_classes = [permissions.IsAuthenticated]
 
-# Add this to your views.py
+class CourseDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Course.objects.all()
+    serializer_class = CourseSerializer
+    #permission_classes = [permissions.IsAuthenticated]
+
+#Course Assignment
 class CourseAssignmentList(generics.ListAPIView):
     serializer_class = AssignemtSerializer
 
@@ -292,5 +297,4 @@ class EnrolledStudentList(generics.ListAPIView):
         student = models.Student.objects.get(pk=student_id)
         return models.Course.objects.filter(
             studentcourseenrollment__student=student
-        ).distinct()
-        
+        ).distinct()       
