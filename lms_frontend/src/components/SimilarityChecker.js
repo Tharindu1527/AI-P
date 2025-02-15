@@ -31,7 +31,17 @@ export default function Home() {
       const data = await response.json();
 
       if (data.status === 'success') {
-        setFiles((prev) => [...prev, { id: data.assignment_id, name: file.name }]);
+        setFiles((prev) => {
+          const exists = prev.some(f => f.id === data.assignment_id);
+          if (exists) {
+            setError('This file has already been uploaded');
+            return prev;
+          }
+          return [...prev, { 
+            id: data.assignment_id, 
+            name: file.name
+          }];
+        });
       } else {
         throw new Error(data.error || 'File upload failed');
       }
@@ -49,6 +59,7 @@ export default function Home() {
 
     setLoading(true);
     setError(null);
+    setResults([]);
 
     try {
       const response = await fetch('http://localhost:8000/api/compare/', {
@@ -66,10 +77,21 @@ export default function Home() {
       }
 
       const data = await response.json();
-      if (data.status === 'success') {
-        setResults(data.results);
+      console.log('API Response:', data); // Debug log
+
+      if (data.status === 'success' && Array.isArray(data.results)) {
+        const formattedResults = data.results.map(result => ({
+          file1: result.assignment1_title,
+          file2: result.assignment2_title,
+          similarity: Math.round(result.similarity_score * 10) / 10,
+          file1_id: result.assignment1_id,
+          file2_id: result.assignment2_id
+        }));
+
+        console.log('Formatted results:', formattedResults); // Debug log
+        setResults(formattedResults);
       } else {
-        throw new Error(data.error || 'Comparison failed');
+        throw new Error('Invalid response format');
       }
     } catch (error) {
       console.error('Comparison error:', error);
@@ -77,6 +99,11 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const removeFile = (fileId) => {
+    setFiles(files.filter((f) => f.id !== fileId));
+    setResults([]);
   };
 
   return (
@@ -88,6 +115,16 @@ export default function Home() {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
+          {/* File Upload Status */}
+          <div className="text-sm text-gray-600 text-center">
+            {files.length === 0 
+              ? 'Upload at least 2 files to compare'
+              : `${files.length} file${files.length === 1 ? '' : 's'} uploaded - ${
+                  files.length < 2 ? 'need ' + (2 - files.length) + ' more' : 'ready to compare'
+                }`
+            }
+          </div>
+
           {/* Controls */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="relative">
@@ -96,12 +133,13 @@ export default function Home() {
                 onChange={handleFileUpload}
                 className="hidden"
                 id="file-upload"
+                accept=".txt,.doc,.docx,.pdf"
               />
               <Button
                 asChild
                 className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-medium shadow-md transition-transform duration-300 transform hover:scale-105"
               >
-                <label htmlFor="file-upload" className="cursor-pointer">
+                <label htmlFor="file-upload" className="cursor-pointer flex items-center">
                   <Upload className="w-4 h-4 mr-2" />
                   Upload File
                 </label>
@@ -141,7 +179,7 @@ export default function Home() {
                   variant="ghost"
                   size="sm"
                   className="text-gray-400 hover:text-red-500 hover:bg-red-50"
-                  onClick={() => setFiles(files.filter((f) => f.id !== file.id))}
+                  onClick={() => removeFile(file.id)}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -150,26 +188,35 @@ export default function Home() {
           </div>
 
           {/* Results */}
-          <div className="space-y-4">
-            {results.map((result, index) => (
-              <div
-                key={index}
-                className="p-4 bg-white rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-300"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-semibold text-gray-800">
-                    Comparison Result #{index + 1}
-                  </h3>
-                  <span className="px-3 py-1 bg-gradient-to-r from-indigo-100 to-purple-100 text-purple-600 rounded-full text-sm font-medium">
-                    {result.similarity}% Match
-                  </span>
+          {results.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Comparison Results</h3>
+              {results.map((result, index) => (
+                <div
+                  key={index}
+                  className="p-4 bg-white rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-300"
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-semibold text-gray-800">
+                      Comparison Result #{index + 1}
+                    </h3>
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      result.similarity > 80
+                        ? 'bg-red-100 text-red-600'
+                        : result.similarity > 50
+                        ? 'bg-yellow-100 text-yellow-600'
+                        : 'bg-green-100 text-green-600'
+                    }`}>
+                      {result.similarity}% Match
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Between: {result.file1} & {result.file2}
+                  </p>
                 </div>
-                <p className="text-sm text-gray-600">
-                  Files: {result.file1} & {result.file2}
-                </p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

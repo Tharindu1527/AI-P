@@ -9,10 +9,13 @@ urlpatterns = [
     path('lecturer/', views.LecturerList.as_view()),
     path('lecturer/<int:pk>/', views.LecturerDetail.as_view()),
     path('lecturer-login', views.lecturer_login),
+
     # Category
     path('category/', views.CategoryList.as_view()),
+
     # Course
     path('course/', views.CourseList.as_view()),
+
     #chapter
     # path('chapter/', views.ChapterList.as_view()),
     path('student-enroll-course/', views.StudentCourseEnrollmentList.as_view()),
@@ -21,6 +24,7 @@ urlpatterns = [
     # Lecturer courses
     path('lecturer-course/<int:lecturer_id>', views.LecturerCourseList.as_view()),
     path('course/<int:pk>/', views.CourseDetails.as_view()),
+
     #Adding Assignment from lecturer
     path('add_assignment/',views.AssignmentList.as_view()),
     # Add this to your urlpatterns list
@@ -30,6 +34,10 @@ urlpatterns = [
     path('upload/', views.upload_assignment, name='upload_assignment'),
     path('compare/', views.compare_assignments, name='compare_assignments'),
     path('list/', views.get_assignments, name='get_assignments'),
+
+    # Similarity reports
+    path('reports/<str:filename>', views.serve_report, name='serve_report'),
+    path('download-report/<str:filename>', views.download_report, name='download_report'),
     
     #Student
     path('student/', views.StudentList.as_view()),
@@ -39,6 +47,7 @@ urlpatterns = [
 
 # Add static file handling
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static('/similarity_reports/', document_root=settings.SIMILARITY_REPORTS_DIR)
 
 # Add format suffix patterns
 urlpatterns = format_suffix_patterns(urlpatterns)
