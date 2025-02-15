@@ -66,6 +66,7 @@ class St_Assignment(models.Model):
 
 # Student Model
 class Student(models.Model):
+    username = models.CharField(max_length=255, unique=True)
     full_name = models.CharField(max_length=100) #if don't use max_length we can't access charfields
     email = models.CharField(max_length=100)
     username= models.CharField(max_length=100,default='default_username')

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { FaUserCircle, FaChalkboardTeacher } from "react-icons/fa";
 
 function Header() {
   const [role, setRole] = useState(null); // Tracks the role: "student", "lecturer", or null.
@@ -29,123 +30,60 @@ function Header() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div className="container">
-        <Link className="navbar-brand" to="/">Learn Online</Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavAltMarkup"
-          aria-controls="navbarNavAltMarkup"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div className="navbar-nav ms-auto">
-            {/* Always Show Home and Courses */}
-            <Link className="nav-link active" aria-current="page" to="/">Home</Link>
-            <Link className="nav-link" to="/all-courses">Courses</Link>
+    <header className="bg-gray-900 text-white shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          <Link className="text-3xl font-bold text-yellow-400 hover:text-yellow-500" to="/">
+          <div className="mb-6 lg:mb-0">
+            <h2 className="text-3xl font-semibold text-white">
+              <span className="text-yellow-400">Plagiarism</span>Detector
+            </h2>
+          </div>
+          </Link>
+          <div className="flex items-center space-x-6">
+            <Link className="text-lg hover:text-yellow-300" to="/">Home</Link>
+            <Link className="text-lg hover:text-yellow-300" to="/all-courses">Courses</Link>
 
-            {/* Show Links for Not Logged-In Users */}
+            {/* User and Lecturer Dropdowns */}
             {role === null && (
-              <>
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarDropdownUser"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    User
-                  </a>
-                  <ul className="dropdown-menu" aria-labelledby="navbarDropdownUser">
-                    <li><Link className="dropdown-item" to="/user-login">Login</Link></li>
-                    <li><Link className="dropdown-item" to="/user-register">Register</Link></li>
-                  </ul>
-                </li>
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarDropdownLecturer"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    Lecturer
-                  </a>
-                  <ul className="dropdown-menu" aria-labelledby="navbarDropdownLecturer">
-                    <li><Link className="dropdown-item" to="/lecturer-login">Login</Link></li>
-                    <li><Link className="dropdown-item" to="/lecturer-register">Register</Link></li>
-                  </ul>
-                </li>
-              </>
+              <div className="relative">
+                <button className="text-lg hover:text-yellow-300">User</button>
+                <div className="absolute right-0 hidden mt-2 space-y-2 bg-gray-800 text-white p-4 rounded-lg shadow-lg group-hover:block">
+                  <Link className="block" to="/user-login">Login</Link>
+                  <Link className="block" to="/user-register">Register</Link>
+                </div>
+              </div>
             )}
 
-            {/* Show Lecturer Menu If Role is Lecturer */}
             {role === "lecturer" && (
-              <li className="nav-item dropdown">
-                <a
-                  className="nav-link dropdown-toggle"
-                  href="#"
-                  id="navbarDropdownLecturer"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
+              <div className="relative">
+                <button className="text-lg hover:text-yellow-300">
+                  <FaChalkboardTeacher className="inline-block mr-1" />
                   Lecturer
-                </a>
-                <ul className="dropdown-menu" aria-labelledby="navbarDropdownLecturer">
-                  <li><Link className="dropdown-item" to="/lecturer-dashboard">Dashboard</Link></li>
-                  <li>
-                    <Link
-                      className="dropdown-item"
-                      to="/"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </Link>
-                  </li>
-                </ul>
-              </li>
+                </button>
+                <div className="absolute right-0 hidden mt-2 space-y-2 bg-gray-800 text-white p-4 rounded-lg shadow-lg group-hover:block">
+                  <Link className="block" to="/lecturer-dashboard">Dashboard</Link>
+                  <Link className="block" to="/" onClick={handleLogout}>Logout</Link>
+                </div>
+              </div>
             )}
 
-            {/* Show User Menu If Role is Student */}
             {role === "student" && (
-              <li className="nav-item dropdown">
-                <a
-                  className="nav-link dropdown-toggle"
-                  href="#"
-                  id="navbarDropdownUser"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
+              <div className="relative">
+                <button className="text-lg hover:text-yellow-300">
+                  <FaUserCircle className="inline-block mr-1" />
                   User
-                </a>
-                <ul className="dropdown-menu" aria-labelledby="navbarDropdownUser">
-                  <li><Link className="dropdown-item" to="/user-dashboard">Dashboard</Link></li>
-                  <li>
-                    <Link
-                      className="dropdown-item"
-                      to="/"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </Link>
-                  </li>
-                </ul>
-              </li>
+                </button>
+                <div className="absolute right-0 hidden mt-2 space-y-2 bg-gray-800 text-white p-4 rounded-lg shadow-lg group-hover:block">
+                  <Link className="block" to="/user-dashboard">Dashboard</Link>
+                  <Link className="block" to="/" onClick={handleLogout}>Logout</Link>
+                </div>
+              </div>
             )}
           </div>
         </div>
       </div>
-    </nav>
+    </header>
   );
 }
 

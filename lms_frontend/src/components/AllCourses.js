@@ -4,6 +4,7 @@ import axios from 'axios';
 
 function AllCourses() {
     const [courseData, setCourseData] = useState([]);
+    const [selectedCourseId, setSelectedCourseId] = useState(null);
     const baseUrl = "http://127.0.0.1:8000/api";
 
     // Fetch all courses
@@ -18,25 +19,50 @@ function AllCourses() {
         }
     }, []);
 
+    // Handle course selection
+    const handleSelectCourse = (id) => {
+        setSelectedCourseId(id);
+    };
+
     return (
-        <div className="container mt-3">
-            {/* Latest Courses */}
-            <h3 className="pb-1 mb-4 mt-5">Latest Courses</h3>
-            <div className="row">
-                {courseData.map((course, index) => (
-                    <div className="col-md-3 mb-4" key={index}>
-                        <div className="card">
-                            <img 
-                                src={course.featured_img} 
-                                className="card-img-top" 
-                                alt={course.title}
-                                style={{height: "200px", objectFit: "cover"}}
-                            />
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    <Link to={`/detail/${course.id}`}>{course.title}</Link>
-                                </h5>
-                                <p className="card-text">{course.techs}</p>
+        <div className="container my-5">
+            <div className="text-center mb-5">
+                <h1 className="display-5 fw-bold">Discover Your Next Course</h1>
+                <p className="text-muted">Browse through our latest and greatest offerings!</p>
+            </div>
+
+            <div className="row g-4">
+                {courseData.map((course) => (
+                    <div className="col-md-6 col-lg-4 col-xl-3" key={course.id}>
+                        <div
+                            className="card h-100 shadow-sm"
+                            style={{
+                                border: selectedCourseId === course.id ? '3px solid #0d6efd' : '1px solid #ddd',
+                                backgroundColor: selectedCourseId === course.id ? '#f0f8ff' : '#fff',
+                                transition: 'all 0.3s ease',
+                            }}
+                            onClick={() => handleSelectCourse(course.id)}
+                        >
+                            <div className="position-relative">
+                                <img
+                                    src={course.featured_img}
+                                    className="card-img-top rounded-top"
+                                    alt={course.title}
+                                    style={{ height: '200px', objectFit: 'cover' }}
+                                />
+                                <div className="badge bg-primary position-absolute top-0 end-0 m-2">
+                                    New
+                                </div>
+                            </div>
+                            <div className="card-body d-flex flex-column">
+                                <h5 className="card-title text-truncate">{course.title}</h5>
+                                <p className="card-text text-muted small">{course.techs}</p>
+                                <Link
+                                    to={`/detail/${course.id}`}
+                                    className="btn btn-outline-primary mt-auto align-self-start"
+                                >
+                                    Learn More
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -44,25 +70,36 @@ function AllCourses() {
             </div>
 
             {/* Pagination */}
-            <nav aria-label="Page navigation example">
-                <ul className="pagination justify-content-center">
-                    <li className="page-item">
-                        <a className="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    <li className="page-item"><a className="page-link" href="#">1</a></li>
-                    <li className="page-item"><a className="page-link" href="#">2</a></li>
-                    <li className="page-item"><a className="page-link" href="#">3</a></li>
-                    <li className="page-item">
-                        <a className="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            {/* Pagination */}
+<nav className="mt-5">
+    <ul className="pagination justify-content-center">
+        <li className="page-item">
+            <button className="page-link text-primary" aria-label="Previous">
+                <span aria-hidden="true">&laquo; Previous</span>
+            </button>
+        </li>
+        <li className="page-item">
+            <button className="page-link text-dark">1</button>
+        </li>
+        <li className="page-item">
+            <button className="page-link text-dark">2</button>
+        </li>
+        <li className="page-item">
+            <button className="page-link text-dark">3</button>
+        </li>
+        <li className="page-item">
+            <button className="page-link text-primary" aria-label="Next">
+                <span aria-hidden="true">Next &raquo;</span>
+            </button>
+        </li>
+      </ul>
+    </nav>
+
         </div>
     );
 }
 
 export default AllCourses;
+
+
+
