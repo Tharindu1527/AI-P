@@ -16,7 +16,7 @@ urlpatterns = [
     #chapter
     # path('chapter/', views.ChapterList.as_view()),
     path('student-enroll-course/', views.StudentCourseEnrollmentList.as_view()),
-    path('fetch-enrolled-courses/<int:student_id>', views.EnrolledStudentList.as_view()),
+    path('lecturer/fetch-enrolled-courses/<int:student_id>', views.EnrolledStudentList.as_view()),
    
     # Lecturer courses
     path('lecturer-course/<int:lecturer_id>', views.LecturerCourseList.as_view()),

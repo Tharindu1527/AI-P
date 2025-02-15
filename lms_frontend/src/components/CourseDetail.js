@@ -1,158 +1,198 @@
-import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function CourseDetail() {
-    let { course_id } = useParams();
+    const { course_id } = useParams();
+    const navigate = useNavigate();
     const [courseData, setCourseData] = useState(null);
     const [enrollmentStatus, setEnrollmentStatus] = useState(false);
     const [assignments, setAssignments] = useState([]);
     const [isLecturer, setIsLecturer] = useState(false);
-    
-    const studentId = localStorage.getItem('studentId');
-    const lecturerId = localStorage.getItem('lecturerId'); // Add this to store lecturer ID
+
+    const studentId = localStorage.getItem("studentId");
+    const lecturerId = localStorage.getItem("lecturerId");
     const baseUrl = "http://127.0.0.1:8000/api";
 
-    // Fetch course details, enrollment status, and check if user is lecturer
+    // Fetch course and related data
     useEffect(() => {
-        // Fetch course details
-        axios.get(`${baseUrl}/course/${course_id}/`)
+        axios
+            .get(`${baseUrl}/course/${course_id}/`)
             .then((res) => {
                 setCourseData(res.data);
-                // Check if the logged-in lecturer is the course owner
                 if (lecturerId && res.data.lecturer === parseInt(lecturerId)) {
                     setIsLecturer(true);
                 }
             })
-            .catch(error => {
-                console.log('Error fetching course details:', error);
-            });
+            .catch((error) => console.log("Error fetching course details:", error));
 
-        // Check enrollment status if student is logged in
         if (studentId) {
-            axios.get(`${baseUrl}/fetch-enrolled-courses/${studentId}`)
+            axios
+                .get(`${baseUrl}/fetch-enrolled-courses/${studentId}`)
                 .then((res) => {
-                    const isEnrolled = res.data.some(course => course.id === parseInt(course_id));
+                    const isEnrolled = res.data.some(
+                        (course) => course.id === parseInt(course_id)
+                    );
                     setEnrollmentStatus(isEnrolled);
                 })
-                .catch(error => {
-                    console.log('Error checking enrollment status:', error);
-                });
+                .catch((error) =>
+                    console.log("Error checking enrollment status:", error)
+                );
         }
 
-        // Fetch assignments if user is either the lecturer or an enrolled student
         if (lecturerId || enrollmentStatus) {
-            axios.get(`${baseUrl}/course/${course_id}/assignments/`)
-                .then((res) => {
-                    setAssignments(res.data);
-                })
-                .catch(error => {
-                    console.log('Error fetching assignments:', error);
-                });
+            axios
+                .get(`${baseUrl}/course/${course_id}/assignments/`)
+                .then((res) => setAssignments(res.data))
+                .catch((error) =>
+                    console.log("Error fetching assignments:", error)
+                );
         }
     }, [course_id, studentId, lecturerId, enrollmentStatus]);
 
-    // Handle course enrollment
+    // Enroll in course
     const enrollCourse = () => {
         const enrollData = {
             student: studentId,
-            course: course_id
+            course: course_id,
         };
 
-        axios.post(`${baseUrl}/student-enroll-course/`, enrollData)
-            .then((res) => {
+        axios
+            .post(`${baseUrl}/student-enroll-course/`, enrollData)
+            .then(() => {
                 setEnrollmentStatus(true);
-                alert('Successfully enrolled in the course!');
+                toast.success("Successfully enrolled in the course!");
             })
             .catch((error) => {
                 if (error.response?.status === 400) {
-                    alert('You are already enrolled in this course.');
+                    toast.warning("You are already enrolled in this course.");
                 } else {
-                    alert('Error enrolling in course. Please try again.');
+                    toast.error("Error enrolling in course. Please try again.");
                 }
             });
     };
-    
+
+    // Navigate to assignment submission
+    const handleSubmit = (assignmentId) => {
+        navigate(`/submit-assignment/${course_id}/${assignmentId}`);
+    };
 
     return (
-        <div className="container mt-3">
-            {/* Course Details Section */}
-            <div className="row">
-                <div className="col-4">
-                    <img 
-                        src={courseData?.featured_img || "/logo512.png"} 
-                        className="img-thumbnail" 
-                        alt="Course" 
-                    />
-                </div>
-                <div className="col-8">
-                    <h3>{courseData?.title || `Course Title (ID: ${course_id})`}</h3>
-                    <p>{courseData?.description}</p>
-                    <p className="fw-bold">Course By: <Link to={`/lecturer-detail/${courseData?.lecturer}`}>Lecturer {courseData?.lecturer}</Link></p>
-                    <p className="fw-bold">Total Enrolled: {courseData?.enrolled_count || 0} Students</p>
-                    
-                    {/* Show Add Assignment button for lecturer */}
-                    {isLecturer && (
-                        <Link to={`/add-assignment/${course_id}`} className="btn btn-success mb-3">
-                            Add New Assignment
-                        </Link>
-                    )}
+        <div className="container my-5">
+            <ToastContainer />
+            <div className="bg-light p-5 rounded shadow-lg">
+                {/* Header Section */}
+                <div className="row align-items-center">
+                    <div className="col-lg-4 text-center mb-4 mb-lg-0">
+                        <img
+                            src={courseData?.featured_img || "/placeholder.png"}
+                            className="rounded img-fluid shadow"
+                            alt="Course"
+                            style={{ maxHeight: "300px" }}
+                        />
+                    </div>
+                    <div className="col-lg-8">
+                        <h1 className="display-5 fw-bold">{courseData?.title}</h1>
+                        <p className="lead text-muted">{courseData?.description}</p>
+                        <p>
+                            <strong>Lecturer:</strong>{" "}
+                            <Link
+                                to={`/lecturer-detail/${courseData?.lecturer}`}
+                                className="text-primary"
+                            >
+                                Lecturer {courseData?.lecturer}
+                            </Link>
+                        </p>
+                        <p>
+                            <strong>Enrolled Students:</strong>{" "}
+                            {courseData?.enrolled_count || 0}
+                        </p>
 
-                    {/* Enrollment Section for students */}
-                    {studentId && !enrollmentStatus && (
-                        <button 
-                            onClick={enrollCourse}
-                            className="btn btn-primary mt-3"
-                        >
-                            Enroll in Course
-                        </button>
-                    )}
-                    {enrollmentStatus && (
-                        <div className="alert alert-success mt-3">
-                            You are enrolled in this course
-                        </div>
-                    )}
+                        {/* Actions */}
+                        {isLecturer ? (
+                            <Link
+                                to={`/add-assignment/${course_id}`}
+                                className="btn btn-success btn-lg mt-3"
+                            >
+                                Add Assignment
+                            </Link>
+                        ) : (
+                            <>
+                                {!enrollmentStatus ? (
+                                    <button
+                                        onClick={enrollCourse}
+                                        className="btn btn-primary btn-lg mt-3"
+                                    >
+                                        Enroll Now
+                                    </button>
+                                ) : (
+                                    <div className="alert alert-success mt-3">
+                                        You are enrolled in this course.
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* Assignments Section - Only visible to lecturer and enrolled students */}
+            {/* Assignments Section */}
             {(isLecturer || enrollmentStatus) && (
-                <div className="card mt-4">
-                    <h3 className="card-header">Course Assignments</h3>
+                <div className="card mt-5 border-0 shadow-sm">
+                    <div className="card-header bg-primary text-white">
+                        <h3>Assignments</h3>
+                    </div>
                     <ul className="list-group list-group-flush">
-                        {assignments.map((assignment, index) => (
-                            <li className="list-group-item" key={index}>
-                                <div className="d-flex justify-content-between align-items-center">
+                        {assignments.length > 0 ? (
+                            assignments.map((assignment) => (
+                                <li
+                                    className="list-group-item d-flex justify-content-between align-items-center"
+                                    key={assignment.id}
+                                >
                                     <div>
                                         <h5 className="mb-1">{assignment.title}</h5>
                                         <small className="text-muted">
-                                            Uploaded: {new Date(assignment.uploaded_at).toLocaleDateString()}
+                                            Uploaded on:{" "}
+                                            {new Date(
+                                                assignment.uploaded_at
+                                            ).toLocaleDateString()}
                                         </small>
                                     </div>
-                                    <a 
-                                        href={assignment.file}
-                                        className="btn btn-primary btn-sm"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        Download
-                                    </a>
-                                </div>
-                            </li>
-                        ))}
-                        {assignments.length === 0 && (
-                            <li className="list-group-item text-muted">
+                                    <div>
+                                        <a
+                                            href={assignment.file}
+                                            className="btn btn-outline-primary me-2"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Download
+                                        </a>
+                                        {enrollmentStatus && !isLecturer && (
+                                            <button
+                                                className="btn btn-primary"
+                                                onClick={() =>
+                                                    handleSubmit(assignment.id)
+                                                }
+                                            >
+                                                Submit
+                                            </button>
+                                        )}
+                                    </div>
+                                </li>
+                            ))
+                        ) : (
+                            <li className="list-group-item text-center text-muted">
                                 No assignments available for this course.
                             </li>
                         )}
                     </ul>
                 </div>
             )}
-
-            {/* Rest of your existing code (Course Videos, Related Courses, etc.) */}
         </div>
     );
 }
 
 export default CourseDetail;
+

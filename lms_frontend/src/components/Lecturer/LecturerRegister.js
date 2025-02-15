@@ -1,12 +1,46 @@
-//import { Link } from "react-router-dom";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const baseUrl="http://127.0.0.1:8000/api/lecturer/";
+const baseUrl = "http://127.0.0.1:8000/api/lecturer/";
 
-function LecturerRegister(){
-    
-    const [lecturerData,setlecturerData] = useState({
+function LecturerRegister() {
+  const [lecturerData, setLecturerData] = useState({
+    "full_name": "",
+    "email": "",
+    "password": "",
+    "qualification": "",
+    "department": "",
+    "mobile_no": "",
+    "address": "",
+  });
+
+  // Handle form input changes
+  const handleChange = (event) => {
+    setLecturerData({
+      ...lecturerData,
+      [event.target.name]: event.target.value
+    });
+  };
+
+  // Submit form data
+  const submitForm = async (event) => {
+    event.preventDefault();
+
+    const lecturerFormData = new FormData();
+    lecturerFormData.append("full_name", lecturerData.full_name);
+    lecturerFormData.append("email", lecturerData.email);
+    lecturerFormData.append("password", lecturerData.password);
+    lecturerFormData.append("qualification", lecturerData.qualification);
+    lecturerFormData.append("department", lecturerData.department);
+    lecturerFormData.append("mobile_no", lecturerData.mobile_no);
+    lecturerFormData.append("address", lecturerData.address);
+
+    try {
+      const response = await axios.post(baseUrl, lecturerFormData);
+      setLecturerData({
         "full_name": "",
         "email": "",
         "password": "",
@@ -14,104 +48,129 @@ function LecturerRegister(){
         "department": "",
         "mobile_no": "",
         "address": "",
-        "status": ""
-    });
-
-    //change Element value
-    const handleChange=(event)=>{
-        setlecturerData({
-            ...lecturerData,
-            [event.target.name] : event.target.value
-        });
+      });
+      toast.success("Registration successful! You can now log in.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong. Please try again.");
     }
-    //End
+  };
 
-    // Submit Form
-    const submitForm=()=>{
-        const lectureFormrData = new FormData();
-        lectureFormrData.append("full_name", lecturerData.full_name)
-        lectureFormrData.append("email", lecturerData.email)
-        lectureFormrData.append("password", lecturerData.password)
-        lectureFormrData.append("qualification", lecturerData.qualification)
-        lectureFormrData.append("department", lecturerData.department)
-        lectureFormrData.append("mobile_no", lecturerData.mobile_no)
-        lectureFormrData.append("address", lecturerData.address)
+  const lecturerLoginStatus = localStorage.getItem('lecturerLoginStatus');
+  if (lecturerLoginStatus === 'true') {
+    window.location.href = '/lecturer-dashboard';
+  }
 
-        try{
-            axios.post(baseUrl,lectureFormrData).then((response)=>{
-                setlecturerData({
-        "full_name": "",
-        "email": "",
-        "password": "",
-        "qualification": "",
-        "department": "",
-        "mobile_no": "",
-        "address": "",
-        "status": "success",
-    });
-            });
-        } 
-        catch(error){
-            console.log(error);
-            setlecturerData({'status':"error"})
-        }
-    };
-    //End
-    useEffect(()=>{
-        document.title='Lecturer Register'
-    });
+  useEffect(() => {
+    document.title = 'Lecturer Register';
+  }, []);
 
-    const lecturerLoginStatus = localStorage.getItem('lecturerLoginStatus')
-     if(lecturerLoginStatus === 'true'){
-        window.location.href='/lecturer-dashboard';
-     }
-    return(
-     <div className="container mt-4">
-         <div className="row">
-             <div className="col-6 offset-3">
-             {lecturerData.status == "success" &&<p className="text-success">Thanks for Registration</p>}
-             {lecturerData.status =="error" &&<p className="text-danger">Something went wrong</p>}
-                 <div className="card">
-                     <h5 className="card-header">Lecturer Register</h5>
-                     <div className="card-body">
-                     <form>
-                         <div className="mb-3">
-                            <label for="exampleInputEmail1" className="form-label">Full Name</label>
-                                <input value={lecturerData.full_name} onChange={handleChange} name="full_name" type="text" className="form-control"/>
-                         </div>
-                         <div className="mb-3">
-                            <label for="exampleInputEmail1" className="form-label">Email</label>
-                                <input value={lecturerData.email}  onChange={handleChange} name="email" type="email" className="form-control"/>
-                         </div>
-                         <div className="mb-3">
-                                <label for="exampleInputPassword1" className="form-label">Password</label>
-                                <input value={lecturerData.password} onChange={handleChange} name="password" type="password" className="form-control" id="exampleInputPassword1"/>
-                         </div>
-                         <div className="mb-3">
-                            <label for="exampleInputEmail1" className="form-label">Qualification</label>
-                                <input value={lecturerData.qualification}   onChange={handleChange} name="qualification" type="text" className="form-control"/>
-                         </div>
-                         <div className="mb-3">
-                            <label for="exampleInputEmail1" className="form-label">Department</label>
-                                <input value={lecturerData.department} onChange={handleChange} name="department" type="text" className="form-control"/>
-                         </div>
-                         <div className="mb-3">
-                            <label for="exampleInputEmail1" className="form-label">Mobile Number</label>
-                                <input value={lecturerData.mobile_no} onChange={handleChange} name="mobile_no" type="number" className="form-control"/>
-                         </div>
-                         <div className="mb-3">
-                            <label for="exampleInputEmail1" className="form-label">Address</label>
-                            <textarea value={lecturerData.address} onChange={handleChange} name="address" className="form-control"></textarea>
-                         </div>
-                         <button onClick={submitForm} type="submit" class="btn btn-primary">Register</button>
-                             </form>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
-    )
- 
- }
- export default LecturerRegister;
- 
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+      <div className="max-w-lg w-full bg-white rounded-lg shadow-2xl p-8">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Lecturer Registration</h2>
+
+        <form onSubmit={submitForm}>
+          <div className="mb-4">
+            <label htmlFor="full_name" className="block text-lg font-medium">Full Name</label>
+            <input
+              type="text"
+              name="full_name"
+              value={lecturerData.full_name}
+              onChange={handleChange}
+              id="full_name"
+              className="mt-2 p-3 w-full border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Enter your full name"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-lg font-medium">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={lecturerData.email}
+              onChange={handleChange}
+              id="email"
+              className="mt-2 p-3 w-full border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Enter your email"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="password" className="block text-lg font-medium">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={lecturerData.password}
+              onChange={handleChange}
+              id="password"
+              className="mt-2 p-3 w-full border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Enter your password"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="qualification" className="block text-lg font-medium">Qualification</label>
+            <input
+              type="text"
+              name="qualification"
+              value={lecturerData.qualification}
+              onChange={handleChange}
+              id="qualification"
+              className="mt-2 p-3 w-full border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Enter your qualification"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="department" className="block text-lg font-medium">Department</label>
+            <input
+              type="text"
+              name="department"
+              value={lecturerData.department}
+              onChange={handleChange}
+              id="department"
+              className="mt-2 p-3 w-full border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Enter your department"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="mobile_no" className="block text-lg font-medium">Mobile Number</label>
+            <input
+              type="number"
+              name="mobile_no"
+              value={lecturerData.mobile_no}
+              onChange={handleChange}
+              id="mobile_no"
+              className="mt-2 p-3 w-full border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Enter your mobile number"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label htmlFor="address" className="block text-lg font-medium">Address</label>
+            <textarea
+              name="address"
+              value={lecturerData.address}
+              onChange={handleChange}
+              id="address"
+              className="mt-2 p-3 w-full border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Enter your address"
+            ></textarea>
+          </div>
+
+          <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-300">Register</button>
+        </form>
+
+        <div className="mt-4 text-center">
+          <p className="text-gray-600">Already have an account? <Link to="/lecturer-login" className="text-blue-600 hover:underline">Login here</Link></p>
+        </div>
+      </div>
+      <ToastContainer />
+    </div>
+  );
+}
+
+export default LecturerRegister;

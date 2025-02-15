@@ -32,6 +32,8 @@ import AllCourses from './AllCourses';
 import PopularCourses from './PopularCourses';
 import PopularLecturers from './PopularLecturers';
 import CategoryCoursers from './CategoryCourses';
+import UploadAssignment from './UploadAssignment';
+
 
 //Similarity
 import SimilarityChecker from './SimilarityChecker';
@@ -70,6 +72,7 @@ function Main() {
         <Route path="/popular-lecturers" element={<PopularLecturers/>}/>
         <Route path="/category/:category_id" element={<CategoryCoursers/>}/>
         <Route path="/similarity-checker" element={<SimilarityChecker />} />
+        <Route path="/submit-assignment/:course_id/:assignment_id" element={<UploadAssignment />} />
      </Routes>
      <Footer/>
     </div>
