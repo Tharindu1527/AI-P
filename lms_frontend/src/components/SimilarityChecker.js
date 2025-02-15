@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import { Percent, Upload, Trash2, FileText } from 'lucide-react';
+import { Percent, Upload, Trash2, FileText, Download} from 'lucide-react';
 
 export default function Home() {
   const [files, setFiles] = useState([]);
@@ -85,7 +85,8 @@ export default function Home() {
           file2: result.assignment2_title,
           similarity: Math.round(result.similarity_score * 10) / 10,
           file1_id: result.assignment1_id,
-          file2_id: result.assignment2_id
+          file2_id: result.assignment2_id,
+          report_filename: `report_${result.assignment1_id}_${result.assignment2_id}.pdf`
         }));
 
         console.log('Formatted results:', formattedResults); // Debug log
@@ -99,6 +100,10 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDownload = (filename) => {
+    window.open(`http://localhost:8000/api/download-report/${filename}`, '_blank');
   };
 
   const removeFile = (fileId) => {
@@ -200,15 +205,26 @@ export default function Home() {
                     <h3 className="font-semibold text-gray-800">
                       Comparison Result #{index + 1}
                     </h3>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      result.similarity > 80
-                        ? 'bg-red-100 text-red-600'
-                        : result.similarity > 50
-                        ? 'bg-yellow-100 text-yellow-600'
-                        : 'bg-green-100 text-green-600'
-                    }`}>
-                      {result.similarity}% Match
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        result.similarity > 80
+                          ? 'bg-red-100 text-red-600'
+                          : result.similarity > 50
+                          ? 'bg-yellow-100 text-yellow-600'
+                          : 'bg-green-100 text-green-600'
+                      }`}>
+                        {result.similarity}% Match
+                      </span>
+                      <Button
+                        onClick={() => handleDownload(result.report_filename)}
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-2 hover:bg-gray-100"
+                      >
+                        <Download className="w-4 h-4" />
+                        Report
+                      </Button>
+                    </div>
                   </div>
                   <p className="text-sm text-gray-600">
                     Between: {result.file1} & {result.file2}
