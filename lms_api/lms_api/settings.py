@@ -154,3 +154,6 @@ CORS_ALLOW_ALL_ORIGINS = True #fetiching the data from react to django
 
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,   'media')
+
+SIMILARITY_REPORTS_DIR = os.path.join(MEDIA_ROOT, 'similarity_reports')
+os.makedirs(SIMILARITY_REPORTS_DIR, exist_ok=True)

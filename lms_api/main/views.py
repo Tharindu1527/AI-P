@@ -9,11 +9,15 @@ from .models import St_Assignment
 from django.core.exceptions import ValidationError
 from .utils import calculate_similarity, extract_text_from_file
 import json
-from django.http import JsonResponse,HttpResponse
+from django.http import JsonResponse,HttpResponse,FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from .serializers import LecturerSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
+from django.conf import settings
+import os
+from pathlib import Path
+
 
 #we use generics method to get post and delete functions.when we useprevious method using API view then we have to mension all input Fields
 
@@ -188,7 +192,7 @@ def compare_assignments(request):
             for i in range(len(assignments)):
                 for j in range(i + 1, len(assignments)):
                     try:
-                        similarity = calculate_similarity(
+                        similarity_result = calculate_similarity(
                             assignments[i].file.path,
                             assignments[j].file.path
                         )
@@ -198,7 +202,8 @@ def compare_assignments(request):
                             'assignment1_title': assignments[i].title,
                             'assignment2_id': assignments[j].id,
                             'assignment2_title': assignments[j].title,
-                            'similarity_score': similarity
+                            'similarity_score': similarity_result['similarity_score'],
+                            'report_url' : similarity_result['report_path']
                         })
                     except Exception as e:
                         results.append({
@@ -249,6 +254,21 @@ def get_assignments(request):
             
     return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
 
+def serve_report(request, filename):
+    """Serve a similarity report PDF."""
+    file_path = os.path.join(settings.SIMILARITY_REPORTS_DIR, filename)
+    if os.path.exists(file_path):
+        return FileResponse(open(file_path, 'rb'), content_type='application/pdf')
+    return HttpResponse('Report not found', status=404)
+
+def download_report(request, filename):
+    """Download a similarity report PDF."""
+    file_path = os.path.join(settings.SIMILARITY_REPORTS_DIR, filename)
+    if os.path.exists(file_path):
+        response = FileResponse(open(file_path, 'rb'), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+    return HttpResponse('Report not found', status=404)
 
 # Student class
 
