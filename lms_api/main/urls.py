@@ -36,9 +36,18 @@ urlpatterns = [
     path('list/', views.get_assignments, name='get_assignments'),
 
     # Similarity reports
+    path('reports/', views.list_reports, name='list_reports'),
     path('reports/<str:filename>', views.serve_report, name='serve_report'),
     path('download-report/<str:filename>', views.download_report, name='download_report'),
+    path('delete-report/<str:filename>', views.delete_report, name='delete_report'),
     
+    # Web Similarity
+    path('web-similarity/', views.check_web_similarity, name='check_web_similarity'),
+    path('web-reports/', views.list_web_reports, name='list_web_reports'),
+    path('web-reports/<str:filename>', views.serve_web_report, name='serve_web_report'),
+    path('download-web-report/<str:filename>', views.download_web_report, name='download_web_report'),
+    path('delete-web-report/<str:filename>', views.delete_web_report, name='delete_web_report'),
+
     #Student
     path('student/', views.StudentList.as_view()),
     path('student/<int:pk>/', views.StudentDetail.as_view()),

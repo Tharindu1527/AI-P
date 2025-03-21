@@ -19,7 +19,8 @@ _sf_error_code_map = {
     'no_result': 6,
     'domain': 7,
     'arg': 8,
-    'other': 9
+    'other': 9,
+    'memory': 10,
 }
 
 _sf_error_actions = [
@@ -53,6 +54,7 @@ def test_geterr():
         assert_(value in _sf_error_actions)
 
 
+@pytest.mark.thread_unsafe
 def test_seterr():
     entry_err = sc.geterr()
     try:
@@ -116,6 +118,15 @@ def test_errstate_cpp_scipy_special():
     assert_equal(olderr, sc.geterr())
 
 
+def test_errstate_cpp_alt_ufunc_machinery():
+    olderr = sc.geterr()
+    with sc.errstate(singular='raise'):
+        with assert_raises(sc.SpecialFunctionError):
+            sc.gammaln(0)
+    assert_equal(olderr, sc.geterr())
+
+
+@pytest.mark.thread_unsafe
 def test_errstate():
     for category, error_code in _sf_error_code_map.items():
         for action in _sf_error_actions:

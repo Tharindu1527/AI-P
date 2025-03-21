@@ -156,4 +156,8 @@ MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,   'media')
 
 SIMILARITY_REPORTS_DIR = os.path.join(MEDIA_ROOT, 'similarity_reports')
-os.makedirs(SIMILARITY_REPORTS_DIR, exist_ok=True)
+WEB_REPORTS_DIR = os.path.join(SIMILARITY_REPORTS_DIR, 'web_reports')
+os.makedirs(WEB_REPORTS_DIR, exist_ok=True)
+
+MAX_URLS_PER_REQUEST = 10
+MIN_SIMILARITY_THRESHOLD = 10

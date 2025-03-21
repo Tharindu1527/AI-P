@@ -6,11 +6,12 @@
 # Excel 2007+ xlsm file for insertion into an XlsxWriter file.
 #
 # SPDX-License-Identifier: BSD-2-Clause
-# Copyright 2013-2024, John McNamara, jmcnamara@cpan.org
 #
+# Copyright (c) 2013-2025, John McNamara, jmcnamara@cpan.org
+#
+
 import sys
-from zipfile import ZipFile
-from zipfile import BadZipFile
+from zipfile import BadZipFile, ZipFile
 
 
 def extract_file(xlsm_zip, filename):
@@ -41,7 +42,7 @@ else:
         "\n"
         "Usage: vba_extract file.xlsm\n"
     )
-    exit()
+    sys.exit()
 
 try:
     # Open the Excel xlsm file as a zip file.
@@ -49,30 +50,30 @@ try:
 
     # Read the xl/vbaProject.bin file.
     extract_file(xlsm_zip, vba_filename)
-    print("Extracted: %s" % vba_filename)
+    print(f"Extracted: {vba_filename}")
 
     if "xl/" + vba_signature_filename in xlsm_zip.namelist():
         extract_file(xlsm_zip, vba_signature_filename)
-        print("Extracted: %s" % vba_signature_filename)
+        print(f"Extracted: {vba_signature_filename}")
 
 
 except IOError as e:
-    print("File error: %s" % str(e))
-    exit()
+    print(f"File error: {str(e)}")
+    sys.exit()
 
 except KeyError as e:
     # Usually when there isn't a xl/vbaProject.bin member in the file.
-    print("File error: %s" % str(e))
-    print("File may not be an Excel xlsm macro file: '%s'" % xlsm_file)
-    exit()
+    print(f"File error: {str(e)}")
+    print(f"File may not be an Excel xlsm macro file: '{xlsm_file}'")
+    sys.exit()
 
 except BadZipFile as e:
     # Usually if the file is an xls file and not an xlsm file.
-    print("File error: %s: '%s'" % (str(e), xlsm_file))
+    print(f"File error: {str(e)}: '{xlsm_file}'")
     print("File may not be an Excel xlsm macro file.")
-    exit()
+    sys.exit()
 
 except Exception as e:
     # Catch any other exceptions.
-    print("File error: %s" % str(e))
-    exit()
+    print(f"File error: {str(e)}")
+    sys.exit()

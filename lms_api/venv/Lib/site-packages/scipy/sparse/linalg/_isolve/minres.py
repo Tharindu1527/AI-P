@@ -1,17 +1,14 @@
-import warnings
 from numpy import inner, zeros, inf, finfo
 from numpy.linalg import norm
 from math import sqrt
 
 from .utils import make_system
-from scipy._lib.deprecation import _NoValue, _deprecate_positional_args
 
 __all__ = ['minres']
 
 
-@_deprecate_positional_args(version="1.14.0")
-def minres(A, b, x0=None, *, shift=0.0, tol=_NoValue, maxiter=None,
-           M=None, callback=None, show=False, check=False, rtol=1e-5):
+def minres(A, b, x0=None, *, rtol=1e-5, shift=0.0, maxiter=None,
+           M=None, callback=None, show=False, check=False):
     """
     Use MINimum RESidual iteration to solve Ax=b
 
@@ -22,7 +19,7 @@ def minres(A, b, x0=None, *, shift=0.0, tol=_NoValue, maxiter=None,
 
     Parameters
     ----------
-    A : {sparse matrix, ndarray, LinearOperator}
+    A : {sparse array, ndarray, LinearOperator}
         The real symmetric N-by-N matrix of the linear system
         Alternatively, ``A`` can be a linear operator which can
         produce ``Ax`` using, e.g.,
@@ -52,7 +49,7 @@ def minres(A, b, x0=None, *, shift=0.0, tol=_NoValue, maxiter=None,
     maxiter : integer
         Maximum number of iterations.  Iteration will stop after maxiter
         steps even if the specified tolerance has not been achieved.
-    M : {sparse matrix, ndarray, LinearOperator}
+    M : {sparse array, ndarray, LinearOperator}
         Preconditioner for A.  The preconditioner should approximate the
         inverse of A.  Effective preconditioning dramatically improves the
         rate of convergence, which implies that fewer iterations are needed
@@ -66,18 +63,13 @@ def minres(A, b, x0=None, *, shift=0.0, tol=_NoValue, maxiter=None,
     check : bool
         If ``True``, run additional input validation to check that `A` and
         `M` (if specified) are symmetric. Default is ``False``.
-    tol : float, optional, deprecated
-
-        .. deprecated:: 1.12.0
-           `minres` keyword argument ``tol`` is deprecated in favor of ``rtol``
-           and will be removed in SciPy 1.14.0.
 
     Examples
     --------
     >>> import numpy as np
-    >>> from scipy.sparse import csc_matrix
+    >>> from scipy.sparse import csc_array
     >>> from scipy.sparse.linalg import minres
-    >>> A = csc_matrix([[3, 2, 0], [1, -1, 0], [0, 5, 1]], dtype=float)
+    >>> A = csc_array([[3, 2, 0], [1, -1, 0], [0, 5, 1]], dtype=float)
     >>> A = A + A.T
     >>> b = np.array([2, 4, -1], dtype=float)
     >>> x, exitCode = minres(A, b)
@@ -98,13 +90,6 @@ def minres(A, b, x0=None, *, shift=0.0, tol=_NoValue, maxiter=None,
 
     """
     A, M, x, b, postprocess = make_system(A, M, x0, b)
-
-    if tol is not _NoValue:
-        msg = ("'scipy.sparse.linalg.minres' keyword argument `tol` is "
-               "deprecated in favor of `rtol` and will be removed in SciPy "
-               "v1.14. Until then, if set, it will override `rtol`.")
-        warnings.warn(msg, category=DeprecationWarning, stacklevel=4)
-        rtol = float(tol) if tol is not None else rtol
 
     matvec = A.matvec
     psolve = M.matvec
