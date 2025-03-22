@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -8,14 +8,26 @@ const baseUrl = "http://127.0.0.1:8000/api/lecturer/";
 
 function LecturerRegister() {
   const [lecturerData, setLecturerData] = useState({
-    "full_name": "",
-    "email": "",
-    "password": "",
-    "qualification": "",
-    "department": "",
-    "mobile_no": "",
-    "address": "",
+    full_name: "",
+    email: "",
+    password: "",
+    qualification: "",
+    department: "",
+    mobile_no: "",
+    address: "",
   });
+
+  const navigate = useNavigate();
+
+  // Check if lecturer is already logged in and redirect them
+  useEffect(() => {
+    const lecturerLoginStatus = localStorage.getItem('lecturerLoginStatus');
+    
+    // Only redirect if the user is already logged in and NOT coming from registration
+    if (lecturerLoginStatus === 'true' && window.location.pathname !== '/lecturer-register') {
+      navigate('/dashboard'); // Redirect to dashboard if logged in
+    }
+  }, [navigate]);
 
   // Handle form input changes
   const handleChange = (event) => {
@@ -41,33 +53,44 @@ function LecturerRegister() {
     try {
       const response = await axios.post(baseUrl, lecturerFormData);
       setLecturerData({
-        "full_name": "",
-        "email": "",
-        "password": "",
-        "qualification": "",
-        "department": "",
-        "mobile_no": "",
-        "address": "",
+        full_name: "",
+        email: "",
+        password: "",
+        qualification: "",
+        department: "",
+        mobile_no: "",
+        address: "",
       });
-      toast.success("Registration successful! You can now log in.");
+
+      toast.success("Registration successful! Redirecting to login...");
+
+      // Navigate to login after a short delay
+      setTimeout(() => {
+        navigate('/lecturer-login');
+      }, 2000);
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong. Please try again.");
     }
   };
 
-  const lecturerLoginStatus = localStorage.getItem('lecturerLoginStatus');
-  if (lecturerLoginStatus === 'true') {
-    window.location.href = '/lecturer-dashboard';
-  }
-
   useEffect(() => {
     document.title = 'Lecturer Register';
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-      <div className="max-w-lg w-full bg-white rounded-lg shadow-2xl p-8">
+    <div
+    style={{ backgroundImage: "url('/assets/lecture.webp')", backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      opacity: 0.9 }}
+      
+    >
+      <div className=" mt-3 max-w-lg w-full bg-white rounded-lg shadow-2xl p-8 bg-opacity-90 " >
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Lecturer Registration</h2>
 
         <form onSubmit={submitForm}>

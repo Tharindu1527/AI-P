@@ -10,7 +10,7 @@ export function ResultsList({ results }) {
         {results.map((result, index) => (
           <div key={index} className="p-4 bg-gray-50 rounded-lg">
             <p className="font-medium mb-2">
-              {result.assignment1} vs {result.assignment2}
+              {result.assignment1 || 'N/A'} vs {result.assignment2 || 'N/A'}
             </p>
             <div className="flex items-center gap-2">
               <div className="flex-1 bg-gray-200 rounded-full h-2.5">
@@ -20,7 +20,7 @@ export function ResultsList({ results }) {
                 />
               </div>
               <span className="text-sm font-medium w-16">
-                {result.similarity_score}%
+                {result.similarity_score || 0}%
               </span>
             </div>
           </div>

@@ -1,4 +1,4 @@
-#!D:\SOFTWARE PROJECT\LMSSSSSSSSSSS\AI-P\lms_api\venv\Scripts\python.exe
+#!D:\SOFTWARE PROJECT\LMSSSSSSSSSSS\Omanthi\ai-pl\lms_api\venv\Scripts\python.exe
 
 ##############################################################################
 #

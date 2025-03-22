@@ -98,6 +98,7 @@ function AddChapters() {
                                     <label for="title" className="form-label">Remarks</label>
                                     <input type="text" id="title" placeholder="THis is the introduction vedio" className="form-control"/> 
                                 </div>*/}
+                                
                                 <button type="submit" onClick={formSubmit} class="btn btn-primary">Submit</button>
 
                             </form>
