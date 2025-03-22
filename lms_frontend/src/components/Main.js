@@ -10,10 +10,12 @@ import RecomendedCourses from './User/RecommendedCourse';
 import Footer from './Footer';
 import CourseDetail from './CourseDetail';
 import { Route ,Routes } from 'react-router-dom';
-import ProfileSettings from './User/ProfileSettings';
 import ChangePassword from './User/ChangePassword';
 import LecturerDetail from './Lecturer/LecturerDetail';
 import Logout from './User/logout';
+//import Assignments from './User/Assignments'; 
+//import AssignmentDetail from "./User/AssignmentDatail"; 
+
 //Lecturer
 import LecturerLogin from './Lecturer/LecturerLogin';
 import LecturerLogout from './Lecturer/LecturerLogout';
@@ -32,11 +34,21 @@ import AllCourses from './AllCourses';
 import PopularCourses from './PopularCourses';
 import PopularLecturers from './PopularLecturers';
 import CategoryCoursers from './CategoryCourses';
-import UploadAssignment from './UploadAssignment';
-
 
 //Similarity
 import SimilarityChecker from './SimilarityChecker';
+import CourseEnrollment from './courseEnrollement';
+import AssignmentDetail from './User/AssignmentDetail';
+import Assignments from './User/Assignments';
+import UserPlagiarismChecker from './User/UserPlagiarismChecker';
+import Profile from './User/Profile';
+import Calendar from './User/Calendar';
+import LecturerCalendar from './Lecturer/LecturerCalendar';
+import LecturerAssignmentView from './Lecturer/LecturerAssignmentView';
+import EditAddAssignment from './Lecturer/EditAddAssignment';
+import EditCourse from './Lecturer/EditCourse';
+import LecturerSimilarityChecker from './Lecturer/LecturerSimilarityCheacker';
+
 
 function Main() {
   return (
@@ -45,7 +57,7 @@ function Main() {
      <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/about" element={<About/>}/>
-        <Route path="/detail/:course_id" element={<CourseDetail/>}/>
+        <Route path="/detail/:course_id" element={<CourseDetail />} />
         <Route path="/user-login" element={<Login/>}/>
         <Route path="/user-register" element={<Register/>}/>
         <Route path="/user-dashboard" element={<Dashboard/>}/>
@@ -53,7 +65,6 @@ function Main() {
         <Route path="/my-courses" element={<MyCourses/>}/>
         <Route path="/favorite-courses" element={<FavoriteCourses/>}/>
         <Route path="/recommended-course" element={<RecomendedCourses/>}/>
-        <Route path="/profile-settings" element={<ProfileSettings/>}/>
         <Route path="/change-password" element={<ChangePassword/>}/>
         <Route path="/lecturer-login" element={<LecturerLogin/>}/>
         <Route path="/lecturer-logout" element={<LecturerLogout/>}/>
@@ -67,12 +78,23 @@ function Main() {
         <Route path="/lecturer-courses" element={<LecturerCourses/>}/>
         <Route path="/lecturer-detail/:lecturer_id" element={<LecturerDetail/>}/>
         <Route path="/add-assignment/:courseId" element={<AddAssignment />} />
-        <Route path="/all-courses" element={<AllCourses/>}/>
+        <Route path="/all-courses/" element={<AllCourses/>}/>
         <Route path="/popular-courses" element={<PopularCourses/>}/>
         <Route path="/popular-lecturers" element={<PopularLecturers/>}/>
         <Route path="/category/:category_id" element={<CategoryCoursers/>}/>
         <Route path="/similarity-checker" element={<SimilarityChecker />} />
-        <Route path="/submit-assignment/:course_id/:assignment_id" element={<UploadAssignment />} />
+        <Route path="/course-enroll" element={<CourseEnrollment />} />
+       <Route path="/assignments/:id" element={<AssignmentDetail/>}/>
+        <Route path="/user-assignments/"element={<Assignments/>}/>
+        <Route path='/plagiarism-checker'element={<UserPlagiarismChecker/>}/>
+        <Route path='/profile' element={<Profile/>}/>
+        <Route path='/user-calendar' element={<Calendar/>}/>
+        <Route path='/lecturer-calendar' element={<LecturerCalendar/>}/>
+        <Route path="/assignments/:assignment_id" element={<LecturerAssignmentView/>}/>
+        <Route path ="/edit-assignment/:course_id/:assignment_id" element={<EditAddAssignment/>}/>
+        <Route path='/edit-course/:id' element={<EditCourse/>}/>
+        <Route path ="/lecturer-similarity" element={< LecturerSimilarityChecker/>}/>
+        
      </Routes>
      <Footer/>
     </div>

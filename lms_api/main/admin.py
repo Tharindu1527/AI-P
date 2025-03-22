@@ -10,5 +10,5 @@ admin.site.register(models.Course)
 admin.site.register(models.Student)
 admin.site.register(models.Assignment)
 admin.site.register(models.St_Assignment)
-
+#admin.site.register(models.AssignmentSubmission)
 

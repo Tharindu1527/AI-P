@@ -1,15 +1,17 @@
 from django.db import models #this is create database structure
 from django.core.validators import FileExtensionValidator
+import os
 
 # Lecturer Model
 class Lecturer(models.Model):
     full_name = models.CharField(max_length=100) #if don't use max_length we can't access charfields
-    email = models.CharField(max_length=100)
+    email = models.CharField(max_length=100,unique=True)
     password = models.CharField(max_length=100)
     qualification = models.CharField(max_length=200)
     department = models.CharField(max_length=100)
     mobile_no = models.CharField(max_length=20)
     address = models.TextField()
+    profile_image = models.ImageField(upload_to='lecturer_profiles/', null=True, blank=True)
 
     class Meta :  #this use for change our models names (Sort using Alphebatic order)
         verbose_name_plural = "1 . Lecturer"
@@ -31,8 +33,10 @@ class Course(models.Model):
     lecturer = models.ForeignKey(Lecturer, on_delete=models.CASCADE)
     title = models.CharField(max_length=150) #if don't use max_length we can't access charfields
     description = models.TextField()
-    featured_img=models.ImageField(upload_to="course_imgs/",null=True)
+    featured_img=models.ImageField(upload_to="course_imgs/",null=False)
     techs = models.TextField(null=True)
+    enrollment_key= models.CharField(max_length=20, blank=True, default='')
+    requires_enrollment_key = models.BooleanField(default=True)
     
 
     class Meta :
@@ -40,6 +44,7 @@ class Course(models.Model):
 #Lecturer Assignment
 class Assignment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE,related_name = 'assignment')#create relasionship with courses
+    title = models.CharField(max_length=200, default='Untitled Assignment')
     file = models.FileField(upload_to='course_assignment/',
                             validators = [FileExtensionValidator(allowed_extensions=['txt', 'doc', 'docx', 'pdf'])])
     uploaded_at = models.DateTimeField(auto_now_add=True) 
@@ -49,6 +54,12 @@ class Assignment(models.Model):
     
     def __str__(self):
         return f"Assignment for {self.course.title}"
+    
+    def get_file_extension(self):
+        """
+        Helper method to get the file extension
+        """
+        return os.path.splitext(self.file.name)[1]
 
 #Similarity Checker Assignment
 class St_Assignment(models.Model):
@@ -66,7 +77,6 @@ class St_Assignment(models.Model):
 
 # Student Model
 class Student(models.Model):
-    username = models.CharField(max_length=255, unique=True)
     full_name = models.CharField(max_length=100) #if don't use max_length we can't access charfields
     email = models.CharField(max_length=100)
     username= models.CharField(max_length=100,default='default_username')
@@ -97,5 +107,10 @@ class StudentCourseEnrollment(models.Model):
         verbose_name_plural = "8. Enrolled Courses"
         unique_together = ('student', 'course')  
         
-        
 
+#user Profile
+
+
+
+        
+ 

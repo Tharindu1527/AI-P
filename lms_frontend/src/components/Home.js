@@ -4,7 +4,7 @@ import { Users, FileText, Database, Search } from 'lucide-react';
 
 const Home = () => {
   const [showModal, setShowModal] = useState(false);
-  const navigate = useNavigate(); // This hook will allow us to navigate programmatically
+  const navigate = useNavigate(); // Hook to navigate between pages
 
   return (
     <div className="min-h-screen bg-gray-100 overflow-x-hidden">
@@ -88,21 +88,19 @@ const Home = () => {
         </div>
       </div>
 
-      
-
-      {/* Modal for Login Options */}
+      {/* Login Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-8 w-96 text-center">
             <h3 className="text-2xl font-bold mb-6">Login Options</h3>
             <button
-              onClick={() => navigate('/lecturer-login')} // Navigate to lecturer login page
+              onClick={() => navigate('/lecturer-register')} // Navigate to lecturer login page
               className="bg-blue-600 px-6 py-2 rounded text-white font-semibold hover:bg-blue-700 transition-all w-full mb-4"
             >
               Login as Lecturer
             </button>
             <button
-              onClick={() => navigate('/user-login')} // Navigate to student login page
+              onClick={() => navigate('/user-register')} // Navigate to user registration instead of login
               className="bg-blue-600 px-6 py-2 rounded text-white font-semibold hover:bg-blue-700 transition-all w-full"
             >
               Login as Student
@@ -119,7 +117,5 @@ const Home = () => {
     </div>
   );
 };
-
-
 
 export default Home;

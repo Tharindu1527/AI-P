@@ -1,93 +1,146 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaBook, FaHeart, FaStar, FaUserCog, FaSignOutAlt, FaBars } from "react-icons/fa";
+import { Tooltip } from "react-tooltip"; // For tooltips
 
-function Sidebar() {
+function Sidebar({ isOpen, toggleSidebar }) {
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false); // Sidebar visibility state
 
-  const toggleSidebar = () => setIsOpen(!isOpen); // Toggle the sidebar state
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (isOpen && 
+          !event.target.closest('.sidebar') && 
+          !event.target.closest('.sidebar-toggle')) {
+        toggleSidebar();
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen, toggleSidebar]);
 
-  const isActive = (path) => (location.pathname === path ? "bg-gray-700" : ""); // Add active class for active links
+  // Add resize handler to close sidebar on larger screens
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth >= 768 && isOpen) {
+        toggleSidebar();
+      }
+    }
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen, toggleSidebar]);
+
+  const isActive = (path) => (location.pathname === path ? "bg-gray-700" : "");
+
+  // Sidebar style
+  const sidebarStyle = {
+    maxHeight: 'calc(100vh - 64px)', // Adjust based on header height
+    overflowY: 'auto',
+    paddingBottom: '100px', // Extra padding to avoid footer overlap
+    width: "64px", // Thin sidebar width
+    borderRadius: "0 20px 20px 0", // Curved corners on the right side
+  };
 
   return (
-    <div className="flex">
-      
-      <div
-        className={`fixed top-24 left-6 h-auto w-60 bg-gray-800 text-white p-5 space-y-6 transform transition-transform duration-300 z-40 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-        style={{ maxHeight: "75vh", overflowY: "auto" }} // Adjusted height with scrollable content
-      >
-        <h5 className="text-2xl font-bold text-center mb-8">Dashboard</h5>
-
-        <div className="space-y-4">
-          <Link
-            to="/my-courses"
-            className={`flex items-center px-4 py-2 rounded-lg transition duration-300 ${isActive(
-              "/my-courses"
-            )} hover:bg-gray-700`}
-            onClick={() => setIsOpen(false)} // Close sidebar on link click
-          >
-            <FaBook className="mr-3" /> My Courses
-          </Link>
-          <Link
-            to="/favorite-courses"
-            className={`flex items-center px-4 py-2 rounded-lg transition duration-300 ${isActive(
-              "/favorite-courses"
-            )} hover:bg-gray-700`}
-            onClick={() => setIsOpen(false)}
-          >
-            <FaHeart className="mr-3" /> Favorite Courses
-          </Link>
-          <Link
-            to="/recommended-course"
-            className={`flex items-center px-4 py-2 rounded-lg transition duration-300 ${isActive(
-              "/recommended-course"
-            )} hover:bg-gray-700`}
-            onClick={() => setIsOpen(false)}
-          >
-            <FaStar className="mr-3" /> Recommended Courses
-          </Link>
-          <Link
-            to="/profile-settings"
-            className={`flex items-center px-4 py-2 rounded-lg text-gray-400 hover:bg-gray-700 transition duration-300 ${isActive(
-              "/profile-settings"
-            )}`}
-            aria-disabled="true"
-            onClick={() => setIsOpen(false)}
-          >
-            <FaUserCog className="mr-3" /> Profile Settings
-          </Link>
-          <Link
-            to="/user-logout"
-            className={`flex items-center px-4 py-2 rounded-lg text-red-500 hover:bg-gray-700 transition duration-300 ${isActive(
-              "/user-logout"
-            )}`}
-            aria-disabled="true"
-            onClick={() => setIsOpen(false)}
-          >
-            <FaSignOutAlt className="mr-3" /> Logout
-          </Link>
-        </div>
-      </div>
-
-     
+    <>
+      {/* Sidebar toggle button */}
       <button
-        className="fixed top-28 left-8 bg-gray-800 text-white p-2 rounded-md shadow-md z-50"
+        className="sidebar-toggle fixed top-28 left-4 z-30 bg-gray-800 text-white p-2 rounded-md shadow-lg hover:bg-gray-700 focus:outline-none md:hidden"
         onClick={toggleSidebar}
+        aria-label="Toggle sidebar"
       >
-        <FaBars size={20} />
+        <FaBars size={18} />
       </button>
 
-      
+      {/* Sidebar */}
+      <aside
+        className={`sidebar fixed top-16 left-0 bg-gray-800 text-white shadow-xl transform transition-transform duration-300 ease-in-out z-20 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0`}
+        style={sidebarStyle}
+      >
+        <div className="px-2 py-6 mt-2">
+          <nav className="space-y-4">
+            {/* Dashboard Link */}
+            
+
+            {/* My Courses Link */}
+            <Link
+              to="/my-courses"
+              className={`flex items-center justify-center p-3 rounded-lg transition-colors ${isActive(
+                "/my-courses"
+              )} hover:bg-gray-700`}
+              onClick={() => toggleSidebar}
+              data-tooltip-id="courses-tooltip"
+              data-tooltip-content="My Courses"
+            >
+              <FaBook size={20} />
+            </Link>
+
+            {/* Favorite Courses Link */}
+            <Link
+              to="/favorite-courses"
+              className={`flex items-center justify-center p-3 rounded-lg transition-colors ${isActive(
+                "/favorite-courses"
+              )} hover:bg-gray-700`}
+              onClick={() => toggleSidebar}
+              data-tooltip-id="favorites-tooltip"
+              data-tooltip-content="Favorite Courses"
+            >
+              <FaHeart size={20} />
+            </Link>
+
+            {/* Recommended Courses Link */}
+            <Link
+              to="/all-courses"
+              className={`flex items-center justify-center p-3 rounded-lg transition-colors ${isActive(
+                "/all-courses"
+              )} hover:bg-gray-700`}
+              onClick={() => toggleSidebar}
+              data-tooltip-id="recommended-tooltip"
+              data-tooltip-content=" Courses"
+            >
+              <FaStar size={20} />
+            </Link>
+
+            {/* Profile Settings Link */}
+            <Link
+              to="/profile"
+              className={`flex items-center justify-center p-3 rounded-lg transition-colors ${isActive(
+                "/profile-settings"
+              )} hover:bg-gray-700`}
+              onClick={() => toggleSidebar}
+              data-tooltip-id="profile-tooltip"
+              data-tooltip-content="Profile Settings"
+            >
+              <FaUserCog size={20} />
+            </Link>
+
+            {/* Logout Link */}
+            
+            <Link to='/user-logout'button type="button" class="flex items-center justify-center p-3 rounded-lg transition-colors text-red-400 hover:bg-gray-700 hover:text-red-300" ><FaSignOutAlt size={20} /></Link>
+          </nav>
+        </div>
+      </aside>
+
+      {/* Tooltips */}
+      <Tooltip id="dashboard-tooltip" />
+      <Tooltip id="courses-tooltip" />
+      <Tooltip id="favorites-tooltip" />
+      <Tooltip id="recommended-tooltip" />
+      <Tooltip id="profile-tooltip" />
+      <Tooltip id="logout-tooltip" />
+
+      {/* Overlay for better mobile experience */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50 z-30"
+          className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
           onClick={toggleSidebar}
-        ></div>
+        />
       )}
-    </div>
+    </>
   );
 }
 

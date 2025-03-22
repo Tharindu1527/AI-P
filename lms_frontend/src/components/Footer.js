@@ -1,8 +1,9 @@
+import React from 'react';
 import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white py-8">
+    <footer className="bg-gray-800 text-white py-8 z-10 relative">
       <div className="max-w-7xl mx-auto px-6">
         <div className="lg:flex justify-between items-center">
           {/* Logo or App Name */}
@@ -12,9 +13,9 @@ const Footer = () => {
             </h2>
             <p className="text-sm text-gray-200 mt-2">Your trusted plagiarism detection tool.</p>
           </div>
-
+          
           {/* Links Section */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             <div>
               <h3 className="font-bold text-lg mb-4">Company</h3>
               <ul>
@@ -23,7 +24,7 @@ const Footer = () => {
                 <li><a href="#contact" className="hover:text-yellow-300">Contact</a></li>
               </ul>
             </div>
-
+            
             <div>
               <h3 className="font-bold text-lg mb-4">Legal</h3>
               <ul>
@@ -31,7 +32,7 @@ const Footer = () => {
                 <li><a href="#terms" className="hover:text-yellow-300">Terms of Service</a></li>
               </ul>
             </div>
-
+            
             <div>
               <h3 className="font-bold text-lg mb-4">Resources</h3>
               <ul>
@@ -39,27 +40,27 @@ const Footer = () => {
                 <li><a href="#help" className="hover:text-yellow-300">Help Center</a></li>
               </ul>
             </div>
-
+            
             <div>
               <h3 className="font-bold text-lg mb-4">Follow Us</h3>
-              <ul className="flex justify-center space-x-6">
+              <ul className="flex justify-start space-x-6">
                 <li>
-                  <a href="https://twitter.com" target="_blank" className="hover:text-yellow-300">
+                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300">
                     <FaTwitter className="text-4xl" />
                   </a>
                 </li>
                 <li>
-                  <a href="https://youtube.com" target="_blank" className="hover:text-yellow-300">
+                  <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300">
                     <FaYoutube className="text-4xl" />
                   </a>
                 </li>
                 <li>
-                  <a href="https://facebook.com" target="_blank" className="hover:text-yellow-300">
+                  <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300">
                     <FaFacebookF className="text-4xl" />
                   </a>
                 </li>
                 <li>
-                  <a href="https://instagram.com" target="_blank" className="hover:text-yellow-300">
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-yellow-300">
                     <FaInstagram className="text-4xl" />
                   </a>
                 </li>
@@ -67,7 +68,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-
+        
         {/* Bottom Section */}
         <div className="mt-8 border-t border-gray-700 pt-6 text-center">
           <p className="text-sm text-gray-300">© 2025 PlagiarismDetector. All Rights Reserved.</p>
