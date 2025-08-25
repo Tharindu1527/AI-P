@@ -61,9 +61,10 @@ ai-plagiarism-detector/
 ## Contributing
 
 This project is being developed by:
-- Tharindu Dhanushka
-- Thikshana Omanthi
-- Janani Baalasooriya
+- Tharindu Dhanushka - Project Manager/Backend
+- Thikshana Omanthi - Backend
+- Janani Baalasooriya - Frontend
+- Tharushi Nimeshika - Frontend
 
 We welcome contributions! Please feel free to submit pull requests.
 
