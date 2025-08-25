@@ -64,7 +64,7 @@ This project is being developed by:
 - Tharindu Dhanushka - Project Manager/Backend
 - Thikshana Omanthi - Backend
 - Janani Baalasooriya - Frontend
-- Tharushi Nimeshika - Frontend
+- Tharushi Imesha - Frontend
 
 We welcome contributions! Please feel free to submit pull requests.
 
